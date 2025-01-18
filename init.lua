@@ -159,6 +159,11 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- Seel filetype
+vim.filetype.add {
+  extension = { seel = 'seel' },
+}
+--
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -196,6 +201,8 @@ vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left wind
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+
+vim.keymap.set('n', '<leader>wa', '<cmd>AerialToggle!<CR>')
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -299,6 +306,27 @@ require('lazy').setup({
     'nmac427/guess-indent.nvim',
     config = function()
       require('guess-indent').setup {}
+    end,
+  },
+
+  {
+    'stevearc/aerial.nvim',
+    opts = {},
+    -- Optional dependencies
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('aerial').setup {
+        -- optionally use on_attach to set keymaps when aerial has attached to a buffer
+        on_attach = function(bufnr)
+          -- Jump forwards/backwards with '{' and '}'
+          vim.keymap.set('n', '{', '<cmd>AerialPrev<CR>', { buffer = bufnr })
+          vim.keymap.set('n', '}', '<cmd>AerialNext<CR>', { buffer = bufnr })
+        end,
+      }
+      -- TODO: Add aerial telescope extension
     end,
   },
 
@@ -616,6 +644,9 @@ require('lazy').setup({
           gleam = { inlayHints = { pipelines = true } },
         },
       }
+
+      lspconfig.zls.setup {}
+
       lspconfig.sqlls.setup {}
       -- Brief aside: **What is LSP?**
       --
@@ -658,6 +689,13 @@ require('lazy').setup({
             mode = mode or 'n'
             vim.keymap.set(mode, keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
+
+          local imap = function(keys, func, desc)
+            vim.keymap.set('i', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+          end
+
+          -- Insert mode only
+          imap('<C-y>', vim.lsp.buf.signature_help, 'Signature [H]elp')
 
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
@@ -987,6 +1025,16 @@ require('lazy').setup({
     end,
   },
 
+  -- {
+  --   'folke/tokyonight.nvim',
+  --   priority = 1000,
+  --   init = function()
+  --           vim.cmd.colorscheme 'tokyonight-night'
+  --
+  --     vim.cmd.hi 'Comment gui=none'
+  --   end,
+  -- },
+
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
@@ -1012,9 +1060,6 @@ require('lazy').setup({
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
       vim.cmd.colorscheme 'onedark_vivid'
-
-      -- You can configure highlights by doing something like:
-      -- vim.cmd.hi 'Comment gui=none'
     end,
   },
 
@@ -1058,6 +1103,12 @@ require('lazy').setup({
       --  Check out: https://github.com/echasnovski/mini.nvim
     end,
   },
+
+  {
+    'nvim-treesitter/playground',
+    event = 'BufRead',
+  },
+
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
@@ -1080,6 +1131,10 @@ require('lazy').setup({
         'json',
         'css',
         'javascript',
+        'elixir',
+        'zig',
+        'query',
+        'seel',
       },
       -- Autoinstall languages that are not installed
       auto_install = true,
@@ -1092,6 +1147,24 @@ require('lazy').setup({
       },
       indent = { enable = true, disable = { 'ruby' } },
     },
+    config = function(_, opts)
+      require('nvim-treesitter.configs').setup(opts)
+      opts = {
+        highlight = { enable = true },
+      }
+      --    vim.treesitter.language.register('seel', 'seel')
+      local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
+      parser_config.seel = {
+        install_info = {
+          url = '/Users/oscar/Dev/tree-sitter-seel', -- local path or git repo
+          files = { 'src/parser.c' }, -- include other files if needed
+          generate_requires_npm = false, -- true if npm is needed for generation
+          requires_generate_from_grammar = true, -- false if src/parser.c is pre-generated
+        },
+        filetype = 'seel', -- Map the parser to the 'seel' filetype
+      }
+    end,
+
     -- There are additional nvim-treesitter modules that you can use to interact
     -- with nvim-treesitter. You should go explore a few and see what interests you:
     --
