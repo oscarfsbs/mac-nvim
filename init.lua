@@ -159,17 +159,25 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
--- Seel filetype
+-- vim.treesitter.language.register('seel', 'seel') -- the someft filetype will use the python parser and queries.
+--
+--
+
+--
 vim.filetype.add {
   extension = { seel = 'seel' },
 }
---
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+-- Todo keybinds
+
+vim.keymap.set('n', '<leader>td', '<cmd>TodoTelescope<CR>', { desc = '[T]o[d]o comments' })
 
 -- Diagnostic keymaps
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
@@ -206,6 +214,14 @@ vim.keymap.set('n', '<leader>wa', '<cmd>AerialToggle!<CR>')
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
+
+-- Tree-sitter autocommand
+
+vim.api.nvim_create_autocmd('VimEnter', {
+  callback = function()
+    vim.cmd 'TSUpdate'
+  end,
+})
 
 -- Highlight when yanking (copying) text
 --  Try it with `yap` in normal mode
@@ -645,7 +661,7 @@ require('lazy').setup({
         },
       }
 
-      lspconfig.zls.setup {}
+      lspconfig.elp.setup {}
 
       lspconfig.sqlls.setup {}
       -- Brief aside: **What is LSP?**
@@ -803,8 +819,10 @@ require('lazy').setup({
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
         elixirls = {},
+
+        -- erlangls = {},
         -- clangd = {},
-        -- gopls = {},
+        gopls = {},
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -1104,11 +1122,6 @@ require('lazy').setup({
     end,
   },
 
-  {
-    'nvim-treesitter/playground',
-    event = 'BufRead',
-  },
-
   { -- Highlight, edit, and navigate code
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
@@ -1132,9 +1145,8 @@ require('lazy').setup({
         'css',
         'javascript',
         'elixir',
-        'zig',
         'query',
-        'seel',
+        -- 'seel',
       },
       -- Autoinstall languages that are not installed
       auto_install = true,
@@ -1152,16 +1164,14 @@ require('lazy').setup({
       opts = {
         highlight = { enable = true },
       }
-      --    vim.treesitter.language.register('seel', 'seel')
       local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
       parser_config.seel = {
         install_info = {
-          url = '/Users/oscar/Dev/tree-sitter-seel', -- local path or git repo
+          url = '~/Dev/tree-sitter-seel', -- local path or git repo
           files = { 'src/parser.c' }, -- include other files if needed
           generate_requires_npm = false, -- true if npm is needed for generation
           requires_generate_from_grammar = true, -- false if src/parser.c is pre-generated
         },
-        filetype = 'seel', -- Map the parser to the 'seel' filetype
       }
     end,
 
