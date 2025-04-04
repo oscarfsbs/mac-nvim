@@ -3,7 +3,7 @@
  "const"
  "fun"
  "import"
- "let"
+ "var"
  "if"
  "else"
  ] @keyword
@@ -16,7 +16,7 @@
 ; Variables
 (constant
   name: (identifier) @constant)
-(let
+(var
   name: (identifier) @constant)
 
 
@@ -47,12 +47,6 @@
 
 (import
   module: (default_import) @module)
-(import
-  module: (std_import) @module)
-(import
-  module: (n_import) @module)
-(import
-  module: (short_import) @module)
 
 [
   "("

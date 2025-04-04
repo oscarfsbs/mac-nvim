@@ -1,89 +1,3 @@
---[[
-
-=====================================================================
-==================== READ THIS BEFORE CONTINUING ====================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
-
-What is Kickstart?
-
-  Kickstart.nvim is *not* a distribution.
-
-  Kickstart.nvim is a starting point for your own configuration.
-    The goal is that you can read every line of code, top-to-bottom, understand
-    what your configuration is doing, and modify it to suit your needs.
-
-    Once you've done that, you can start exploring, configuring and tinkering to
-    make Neovim your own! That might mean leaving Kickstart just the way it is for a while
-    or immediately breaking it into modular pieces. It's up to you!
-
-    If you don't know anything about Lua, I recommend taking some time to read through
-    a guide. One possible example which will only take 10-15 minutes:
-      - https://learnxinyminutes.com/docs/lua/
-
-    After understanding a bit more about Lua, you can use `:help lua-guide` as a
-    reference for how Neovim integrates Lua.
-    - :help lua-guide
-    - (or HTML version): https://neovim.io/doc/user/lua-guide.html
-
-Kickstart Guide:
-
-  TODO: The very first thing you should do is to run the command `:Tutor` in Neovim.
-
-    If you don't know what this means, type the following:
-      - <escape key>
-      - :
-      - Tutor
-      - <enter key>
-
-    (If you already know the Neovim basics, you can skip this step.)
-
-  Once you've completed that, you can continue working through **AND READING** the rest
-  of the kickstart init.lua.
-
-  Next, run AND READ `:help`.
-    This will open up a help window with some basic information
-    about reading, navigating and searching the builtin help documentation.
-
-    This should be the first place you go to look when you're stuck or confused
-    with something. It's one of my favorite Neovim features.
-
-    MOST IMPORTANTLY, we provide a keymap "<space>sh" to [s]earch the [h]elp documentation,
-    which is very useful when you're not exactly sure of what you're looking for.
-
-  I have left several `:help X` comments throughout the init.lua
-    These are hints about where to find more information about the relevant settings,
-    plugins or Neovim features used in Kickstart.
-
-   NOTE: Look for lines like this
-
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
-    Feel free to delete them once you know what you're doing, but they should serve as a guide
-    for when you are first encountering a few different constructs in your Neovim config.
-
-If you experience any errors while trying to install kickstart, run `:checkhealth` for more info.
-
-I hope you enjoy your Neovim journey,
-- TJ
-
-P.S. You can delete this when you're done too. It's your config now! :)
---]]
-
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -159,14 +73,18 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
--- vim.treesitter.language.register('seel', 'seel') -- the someft filetype will use the python parser and queries.
---
---
 
---
+
+
+vim.diagnostic.config {
+  virtual_lines = true,
+}
+
 vim.filetype.add {
   extension = { seel = 'seel' },
 }
+
+
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
@@ -258,7 +176,6 @@ vim.opt.rtp:prepend(lazypath)
 --
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
-  -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
@@ -317,6 +234,8 @@ require('lazy').setup({
   },
 
   { 'folke/trouble.nvim' },
+
+  { 'hiphish/rainbow-delimiters.nvim' },
 
   {
     'nmac427/guess-indent.nvim',
@@ -393,8 +312,6 @@ require('lazy').setup({
     {
       'stevearc/oil.nvim',
       opts = {},
-      -- Optional dependencies
-      -- dependencies = { { "echasnovski/mini.icons", opts = {} } },
       dependencies = { 'nvim-tree/nvim-web-devicons' }, -- use if prefer nvim-web-devicons
       config = function()
         require('oil').setup {}
@@ -425,19 +342,7 @@ require('lazy').setup({
     'wurli/visimatch.nvim',
     opts = {},
   },
-  -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
-  --
-  -- This is often very useful to both group configuration, as well as handle
-  -- lazy loading plugins that don't need to be loaded immediately at startup.
-  --
-  -- For example, in the following configuration, we use:
-  --  event = 'VimEnter'
-  --
-  -- which loads which-key before all the UI elements are loaded. Events can be
-  -- normal autocommands events (`:help autocmd-events`).
-  --
-  -- Then, because we use the `opts` key (recommended), the configuration runs
-  -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
+
 
   { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
@@ -564,15 +469,7 @@ require('lazy').setup({
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       require('telescope').setup {
-        -- You can put your default mappings / updates / etc. in here
-        --  All the info you're looking for is in `:help telescope.setup()`
-        --
-        -- defaults = {
-        --   mappings = {
-        --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
-        --   },
-        -- },
-        -- pickers = {}
+ 
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
@@ -655,14 +552,12 @@ require('lazy').setup({
     config = function()
       local lspconfig = require 'lspconfig'
       lspconfig.gleam.setup {
-
         settings = {
           gleam = { inlayHints = { pipelines = true } },
         },
       }
-
       lspconfig.elp.setup {}
-
+      lspconfig.zls.setup {}
       lspconfig.sqlls.setup {}
       -- Brief aside: **What is LSP?**
       --
@@ -711,7 +606,8 @@ require('lazy').setup({
           end
 
           -- Insert mode only
-          imap('<C-y>', vim.lsp.buf.signature_help, 'Signature [H]elp')
+          -- This has been replaced by C-s (built-in)
+          --imap('<C-y>', vim.lsp.buf.signature_help, 'Signature [H]elp')
 
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
@@ -744,7 +640,7 @@ require('lazy').setup({
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
+          map('<leader>ra', vim.lsp.buf.code_action, '[C]ode [A]ction', { 'n', 'x' })
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
@@ -808,21 +704,15 @@ require('lazy').setup({
       local capabilities = vim.lsp.protocol.make_client_capabilities()
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
 
-      -- Enable the following language servers
-      --  Feel free to add/remove any LSPs that you want here. They will automatically be installed.
-      --
-      --  Add any additional override configuration in the following tables. Available keys are:
-      --  - cmd (table): Override the default command used to start the server
-      --  - filetypes (table): Override the default list of associated filetypes for the server
-      --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
-      --  - settings (table): Override the default settings passed when initializing the server.
-      --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+
       local servers = {
         elixirls = {},
-
+        html = {},
+        svelte = {},
+        gopls = {},
         -- erlangls = {},
         -- clangd = {},
-        gopls = {},
+    
         -- pyright = {},
         -- rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -850,19 +740,7 @@ require('lazy').setup({
         },
       }
 
-      -- Ensure the servers and tools above are installed
-      --
-      -- To check the current status of installed tools and/or manually install
-      -- other tools, you can run
-      --    :Mason
-      --
-      -- You can press `g?` for help in this menu.
-      --
-      -- `mason` had to be setup earlier: to configure its options see the
-      -- `dependencies` table for `nvim-lspconfig` above.
-      --
-      -- You can add other tools here that you want Mason to install
-      -- for you, so that they are available from within Neovim.
+     
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
@@ -904,7 +782,7 @@ require('lazy').setup({
         -- Disable "format_on_save lsp_fallback" for languages that don't
         -- have a well standardized coding style. You can add additional
         -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
+        local disable_filetypes = { c = true, cpp = true, ocaml = true }
         local lsp_format_opt
         if disable_filetypes[vim.bo[bufnr].filetype] then
           lsp_format_opt = 'never'
@@ -1047,9 +925,7 @@ require('lazy').setup({
   --   'folke/tokyonight.nvim',
   --   priority = 1000,
   --   init = function()
-  --           vim.cmd.colorscheme 'tokyonight-night'
-  --
-  --     vim.cmd.hi 'Comment gui=none'
+  --     vim.cmd.colorscheme 'tokyonight-night'
   --   end,
   -- },
 
@@ -1146,7 +1022,7 @@ require('lazy').setup({
         'javascript',
         'elixir',
         'query',
-        -- 'seel',
+        'zig',
       },
       -- Autoinstall languages that are not installed
       auto_install = true,
@@ -1165,14 +1041,7 @@ require('lazy').setup({
         highlight = { enable = true },
       }
       local parser_config = require('nvim-treesitter.parsers').get_parser_configs()
-      parser_config.seel = {
-        install_info = {
-          url = '~/Dev/tree-sitter-seel', -- local path or git repo
-          files = { 'src/parser.c' }, -- include other files if needed
-          generate_requires_npm = false, -- true if npm is needed for generation
-          requires_generate_from_grammar = true, -- false if src/parser.c is pre-generated
-        },
-      }
+  
     end,
 
     -- There are additional nvim-treesitter modules that you can use to interact
@@ -1183,16 +1052,10 @@ require('lazy').setup({
     --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
 
-  -- The following comments only work if you have downloaded the kickstart repo, not just copy pasted the
-  -- init.lua. If you want these files, they are in the repository, so you can just download them and
-  -- place them in the correct locations.
 
-  -- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-  --
-  --  Here are some example plugins that I've included in the Kickstart repository.
-  --  Uncomment any of the lines below to enable them (you will need to restart nvim).
-  --
+
   require 'kickstart.plugins.dashboard',
+  require 'kickstart.plugins.rip',
   -- require 'kickstart.plugins.indent_line',
   -- require 'kickstart.plugins.lint',
   -- require 'kickstart.plugins.autopairs',
@@ -1231,5 +1094,3 @@ require('lazy').setup({
   },
 })
 
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
